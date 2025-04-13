@@ -18,6 +18,7 @@ A 3-layered NestJS application that subscribes to NATS messages, processes them,
 
 - [pnpm](https://pnpm.io/installation)
 - [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
 ---
 
