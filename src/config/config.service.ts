@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { DatabaseConfig, Environment, Nats } from './environment';
+import { DatabaseConfig, Environment, Message, Nats } from './environment';
 
 @Injectable()
 export class ApiConfigService {
@@ -45,6 +45,10 @@ export class ApiConfigService {
 
   get environment(): Environment {
     return this.configService.get<Environment>('environment');
+  }
+
+  get messageConfig(): Message {
+    return this.configService.get<Message>('message');
   }
 
   public get<T = unknown>(path: string): T | undefined {

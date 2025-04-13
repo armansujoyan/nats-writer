@@ -21,6 +21,10 @@ export interface Nats {
   url: string;
 }
 
+export interface Message {
+  subject: string;
+}
+
 export const environmentValidationSchema = Joi.object({
   PORT: Joi.number().default(4000),
   NODE_ENV: Joi.string()
@@ -34,6 +38,7 @@ export const environmentValidationSchema = Joi.object({
   DATABASE_PORT: Joi.string().required(),
   DATABASE_NAME: Joi.string().required(),
   NATS_URL: Joi.string().required(),
+  MESSAGE_SUBJECT: Joi.string().required(),
 });
 
 export default () => ({
@@ -50,5 +55,8 @@ export default () => ({
   },
   nats: {
     url: process.env.NATS_URL,
+  },
+  message: {
+    subject: process.env.MESSAGE_SUBJECT,
   },
 });

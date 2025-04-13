@@ -1,8 +1,8 @@
 import { ApiConfigService } from 'src/config/config.service';
-import NATS from 'nats';
+import { connect } from 'nats';
 
 export const natsFactory = async (config: ApiConfigService) => {
-  const client = await NATS.connect({
+  const client = await connect({
     servers: [config.natsConfig.url],
   });
   return client;
