@@ -1,73 +1,112 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# NATS Subscription Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A 3-layered NestJS application that subscribes to NATS messages, processes them, and persists them in a PostgreSQL database.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📦 Project Structure
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **API Layer**: Subscribes to NATS subject(s) and receives messages.
+- **Service Layer**: Processes and validates incoming messages.
+- **Data Layer**: Persists messages to PostgreSQL using TypeORM.
 
-## Installation
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [pnpm](https://pnpm.io/installation)
+- [Docker](https://www.docker.com/)
+
+---
+
+## 🐳 Running the App with Docker Compose
+
+Start all services (Nest app, PostgreSQL, and NATS):
 
 ```bash
-$ pnpm install
+docker-compose up --build
 ```
 
-## Running the app
+You can then access the NestJS app on http://localhost:3000.
+
+## 🧪 Publishing Test Messages to NATS
+
+You can send test messages to your NATS subject (general) using a CLI script:
+
+📤 Send a Message
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm nats:publish "Hello from CLI"
 ```
 
-## Test
+This will publish the following message to general:
+
+```json
+{
+  "message": "Hello from CLI",
+  "timestamp": "2025-04-13T17:55:00.000Z"
+}
+```
+
+The subscriber will process it and persist it into PostgreSQL.
+
+`Under the hood, this runs the script: scripts/publish.ts.`
+
+## 🛠 Environment Configuration
+
+All configuration is defined in .env:
+
+```env
+PORT=3000
+NODE_ENV=development
+
+# PostgreSQL config
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=nats
+DATABASE_SYNC=false
+DATABASE_LOGGING=false
+
+# NATS config
+NATS_URL=nats://nats:4222
+MESSAGE_SUBJECT=general
+```
+
+Feel free to use `.env.sample` as an example
+
+## 🛢️ Database Migrations
+
+This project uses TypeORM with CLI access for migrations.
+
+### 🔧 Generate a new migration
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm db:migration:generate <MigrationFilePath>
 ```
 
-## Support
+## 🏁 Run migrations
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+pnpm db:migration:run
+```
 
-## Stay in touch
+## ↩️ Revert the last migration
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+pnpm db:migration:revert
+```
 
-## License
+Note: Make sure your database is up via Docker before running these.
 
-Nest is [MIT licensed](LICENSE).
+## 🧼 Linting and Formatting
+
+Run ESLint and Prettier:
+
+```bash
+pnpm lint
+pnpm format
+```
